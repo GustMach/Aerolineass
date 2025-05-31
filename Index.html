@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Registro de Ventas de Boletos - Aeropuerto La Chinita</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    padding: 2rem 1rem;
+    text-align: center;
+    user-select: none;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 2.4rem;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+  }
+  header p {
+    margin-top: 0.5rem;
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: #aad4ffcc;
+  }
+  main {
+    background: #ffffff10;
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 0 20px rgba(255,255,255,0.15);
+    margin-bottom: 3rem;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  label {
+    font-weight: 600;
+    font-size: 1rem;
+    user-select: none;
+  }
+  select, input[type="number"] {
+    border-radius: 8px;
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+    width: 100%;
+  }
+  select:focus, input[type="number"]:focus {
+    box-shadow: 0 0 10px #80bfff;
+  }
+  input[type="number"] {
+    max-width: 100px;
+  }
+  button {
+    background: #0047ab;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.85rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: #0066ff;
+  }
+  #sales-monitor {
+    max-width: 720px;
+    width: 90%;
+    margin: 0 auto 2rem auto;
+    background: #ffffff15;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    color: #eee;
+  }
+  #sales-monitor h2 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: center;
+    padding: 0.6rem 0.75rem;
+  }
+  th {
+    background: #0047ab75;
+    border-bottom: 2px solid #0066ffcc;
+  }
+  tr:nth-child(even) {
+    background: #0047ab33;
+  }
+  tr:hover {
+    background: #0066ff55;
+    cursor: default;
+  }
+  .footer {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #aaccee88;
+  }
+  
+  /* Estilos para mensajes de éxito */
+  .success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 1rem;
+    text-align: center;
+    animation: fadeOut 3s forwards;
+  }
+  
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; height: 0; padding: 0; margin: 0; }
+  }
+  
+  /* Estilos para campos inválidos */
+  .invalid {
+    border: 2px solid #ff4444 !important;
+  }
+  
+  .error-message {
+    color: #ff4444;
+    font-size: 0.8rem;
+    margin-top: -0.8rem;
+    display: none;
+  }
+
+  @media (max-width: 520px) {
+    main {
+      padding: 1.5rem;
+    }
+    #sales-monitor {
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 0.4rem 0.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Registro de Ventas de Boletos</h1>
+  <p>Salida desde Maracaibo, Aeropuerto La Chinita</p>
+</header>
+<main>
+  <form id="ticket-form" autocomplete="off">
+    <div>
+      <label for="ticket-type">Tipo de Boleto</label>
+      <select id="ticket-type" required>
+        <option value="Nacional" selected>Nacional</option>
+        <option value="Internacional">Internacional</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="destination">Destino</label>
+      <select id="destination" required>
+        <option value="" disabled selected>Seleccione destino</option>
+      </select>
+      <div id="destination-error" class="error-message">Por favor seleccione un destino</div>
+    </div>
+
+    <div>
+      <label for="flight-time">Hora de Vuelo (cada 3 horas)</label>
+      <select id="flight-time" required>
+        <option value="" disabled selected>Seleccione hora</option>
+        <option value="12:00 AM">12:00 AM</option>
+        <option value="3:00 AM">3:00 AM</option>
+        <option value="6:00 AM">6:00 AM</option>
+        <option value="9:00 AM">9:00 AM</option>
+        <option value="12:00 PM">12:00 PM</option>
+        <option value="3:00 PM">3:00 PM</option>
+        <option value="6:00 PM">6:00 PM</option>
+        <option value="9:00 PM">9:00 PM</option>
+      </select>
+      <div id="time-error" class="error-message">Por favor seleccione una hora de vuelo</div>
+    </div>
+
+    <div>
+      <label for="quantity">Cantidad de Boletos</label>
+      <input type="number" id="quantity" min="0" max="20" value="1" required />
+      <div id="quantity-error" class="error-message">Debe ingresar al menos 1 boleto (máximo 20)</div>
+    </div>
+
+    <button type="submit">Registrar Venta</button>
+  </form>
+</main>
+
+<section id="sales-monitor">
+  <h2>Monitoreo de Ventas Registradas</h2>
+  <div style="overflow-x:auto;">
+    <table id="sales-table" aria-label="Tabla de ventas">
+      <thead>
+        <tr>
+          <th>Fecha y Hora Registro</th>
+          <th>Tipo</th>
+          <th>Destino</th>
+          <th>Hora Vuelo</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario (USD)</th>
+          <th>Total (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Ventas registradas aparecerán aquí -->
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top: 1rem; text-align:center;">
+    <button id="clear-sales" style="background:#aa0000;">Limpiar Ventas</button>
+  </div>
+</section>
+
+<div class="footer">© Aeropuerto La Chinita - Maracaibo</div>
+
+<script>
+  const destinationsByType = {
+    Nacional: [
+      { name: "Caracas", price: 80 },
+      { name: "Valencia", price: 70 },
+      { name: "Porlamar", price: 65 },
+      { name: "Mérida", price: 75 }
+    ],
+    Internacional: [
+      { name: "Bogotá", price: 150 },
+      { name: "Panamá", price: 170 },
+      { name: "Miami", price: 320 },
+      { name: "Madrid", price: 430 }
+    ]
+  };
+
+  const form = document.getElementById('ticket-form');
+  const ticketTypeSelect = document.getElementById('ticket-type');
+  const destinationSelect = document.getElementById('destination');
+  const flightTimeSelect = document.getElementById('flight-time');
+  const quantityInput = document.getElementById('quantity');
+  const salesTableBody = document.querySelector('#sales-table tbody');
+  const clearBtn = document.getElementById('clear-sales');
+  const STORAGE_KEY = 'ventasBoletosLaChinita';
+
+  // Elementos de mensajes de error
+  const destinationError = document.getElementById('destination-error');
+  const timeError = document.getElementById('time-error');
+  const quantityError = document.getElementById('quantity-error');
+
+  function loadSales() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  function saveSales(sales) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sales));
+  }
+
+  function formatDateTime(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleString('es-VE', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false,
+      timeZone: 'America/Caracas'
+    });
+  }
+
+  // Populate destination options based on selected ticket type
+  function populateDestinations(type) {
+    destinationSelect.innerHTML = '<option value="" disabled selected>Seleccione destino</option>';
+    if (!type || !destinationsByType[type]) return;
+    
+    destinationsByType[type].forEach(dest => {
+      const option = document.createElement('option');
+      option.value = dest.name;
+      option.dataset.price = dest.price;
+      option.textContent = `${dest.name} - $${dest.price} USD`;
+      destinationSelect.appendChild(option);
+    });
+  }
+
+  // Validar campos en tiempo real
+  function setupRealTimeValidation() {
+    // Validación de cantidad (ahora permite 0 pero muestra advertencia)
+    quantityInput.addEventListener('input', function() {
+      if(this.value < 0) this.value = 0;
+      if(this.value > 20) this.value = 20;
+      
+      if(this.value < 1 || this.value > 20) {
+        this.classList.add('invalid');
+        quantityError.style.display = 'block';
+      } else {
+        this.classList.remove('invalid');
+        quantityError.style.display = 'none';
+      }
+    });
+    
+    // Validación de hora de vuelo
+    flightTimeSelect.addEventListener('change', function() {
+      if(this.value === "Seleccione hora") {
+        this.classList.add('invalid');
+        timeError.style.display = 'block';
+      } else {
+        this.classList.remove('invalid');
+        timeError.style.display = 'none';
+      }
+    });
+    
+    // Validación de destino
+    destinationSelect.addEventListener('change', function() {
+      if(this.value === "Seleccione destino") {
+        this.classList.add('invalid');
+        destinationError.style.display = 'block';
+      } else {
+        this.classList.remove('invalid');
+        destinationError.style.display = 'none';
+      }
+    });
+  }
+
+  // Render sales in the monitoring table
+  function renderSales() {
+    const sales = loadSales();
+    salesTableBody.innerHTML = '';
+    
+    if (sales.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 7;
+      td.textContent = 'No hay ventas registradas aún.';
+      td.style.fontStyle = 'italic';
+      tr.appendChild(td);
+      salesTableBody.appendChild(tr);
+      return;
+    }
+
+    sales.forEach(sale => {
+      const total = (sale.price * sale.quantity).toFixed(2);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatDateTime(sale.datetime)}</td>
+        <td>${sale.type}</td>
+        <td>${sale.destination}</td>
+        <td>${sale.flightTime}</td>
+        <td>${sale.quantity}</td>
+        <td>$${sale.price.toFixed(2)}</td>
+        <td>$${total}</td>
+      `;
+      salesTableBody.appendChild(tr);
+    });
+  }
+
+  // Mostrar mensaje de éxito
+  function showSuccessMessage(message) {
+    // Eliminar mensaje anterior si existe
+    const existingMsg = document.querySelector('.success-message');
+    if(existingMsg) existingMsg.remove();
+    
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.textContent = message;
+    form.parentNode.insertBefore(successMsg, form.nextSibling);
+    
+    // Hacer scroll al mensaje
+    successMsg.scrollIntoView({ behavior: 'smooth' });
+    
+    // Eliminar el mensaje después de 3 segundos
+    setTimeout(() => {
+      if(successMsg.parentNode) {
+        successMsg.parentNode.removeChild(successMsg);
+      }
+    }, 3000);
+  }
+
+  // Register sale on form submit
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const type = ticketTypeSelect.value;
+    const destination = destinationSelect.value;
+    const quantity = parseInt(quantityInput.value);
+    const flightTime = flightTimeSelect.value;
+
+    // Validación completa
+    let isValid = true;
+    
+    // Validar destino
+    if(!destination || destination === "Seleccione destino") {
+      destinationSelect.classList.add('invalid');
+      destinationError.style.display = 'block';
+      isValid = false;
+    }
+    
+    // Validar hora de vuelo
+    if(!flightTime || flightTime === "Seleccione hora") {
+      flightTimeSelect.classList.add('invalid');
+      timeError.style.display = 'block';
+      isValid = false;
+    }
+    
+    // Validar cantidad (no permite 0)
+    if(isNaN(quantity) || quantity < 1 || quantity > 20) {
+      quantityInput.classList.add('invalid');
+      quantityError.style.display = 'block';
+      isValid = false;
+      
+      // Mensaje especial si la cantidad es 0
+      if(quantity === 0) {
+        alert("No se puede registrar una venta con 0 boletos. Por favor ingrese una cantidad válida (1-20).");
+      }
+    }
+    
+    if(!isValid) {
+      return;
+    }
+
+    // Find price
+    const destList = destinationsByType[type];
+    const destObj = destList.find(d => d.name === destination);
+    if (!destObj) {
+      alert('Destino no válido para el tipo de boleto seleccionado.');
+      return;
+    }
+
+    const sales = loadSales();
+    sales.push({
+      datetime: new Date().toISOString(),
+      type,
+      destination,
+      flightTime,
+      quantity,
+      price: destObj.price
+    });
+    saveSales(sales);
+    renderSales();
+
+    // Mostrar mensaje de éxito
+    showSuccessMessage(`✓ Venta registrada: ${quantity} boleto(s) para ${destination} a las ${flightTime}`);
+    
+    // Hacer scroll a la tabla de ventas
+    document.getElementById('sales-monitor').scrollIntoView({ behavior: 'smooth' });
+
+    // Resetear formulario
+    form.reset();
+    populateDestinations(ticketTypeSelect.value);
+    ticketTypeSelect.focus();
+  });
+
+  // Clear all sales data
+  clearBtn.addEventListener('click', () => {
+    if(confirm('¿Está seguro que desea limpiar todas las ventas registradas?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      renderSales();
+    }
+  });
+
+  // On ticket type change, update destinations list
+  ticketTypeSelect.addEventListener('change', () => {
+    populateDestinations(ticketTypeSelect.value);
+    destinationSelect.classList.remove('invalid');
+    destinationError.style.display = 'none';
+  });
+
+  // Initialize form on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    populateDestinations(ticketTypeSelect.value);
+    renderSales();
+    setupRealTimeValidation();
+  });
+</script>
+</body>
+</html>
